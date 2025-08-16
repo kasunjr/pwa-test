@@ -165,7 +165,7 @@
 
   // Register SW
   if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js').catch(err => log('SW error: ' + err.message));
+    navigator.serviceWorker.register('sw.js').catch(err => log('SW error: ' + err.message));
   }
 
   // initial load
