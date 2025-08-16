@@ -8,6 +8,7 @@ function sendMessage(action, data) {
         return;
       }
       console.log("Response from extension:", response);
+      document.getElementById("result").innerText = JSON.stringify(response);
     });
   } else {
     console.error("Chrome runtime not available");
