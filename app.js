@@ -1,5 +1,5 @@
 function sendToExtension() {
-  const extensionId = "your-extension-id"; // Replace with your extension's ID
+  const extensionId = "fhafdbecdohieooenndcbmgcdnabodin"; // Replace with your extension's ID
   if (typeof chrome !== "undefined" && chrome.runtime) {
     chrome.runtime.sendMessage(extensionId, { message: "Hello from PWA" }, (response) => {
       if (chrome.runtime.lastError) {
