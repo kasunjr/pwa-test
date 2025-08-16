@@ -1,12 +1,14 @@
-self.addEventListener('install', (e) => {
+// Basic service worker for PWA
+self.addEventListener('install', (event) => {
+  console.log('Service worker installed');
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-  clients.claim();
+self.addEventListener('activate', (event) => {
+  console.log('Service worker activated');
 });
 
-// Simple offline fallback (optional)
 self.addEventListener('fetch', (event) => {
-  event.respondWith(fetch(event.request).catch(() => new Response('Offline', {status: 200})));
+  // Basic caching strategy (optional)
+  event.respondWith(fetch(event.request));
 });

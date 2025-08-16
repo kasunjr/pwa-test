@@ -1,16 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>PWA Mock Test</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
 </head>
 <body>
-  <h2>PWA - Extension Messaging Test</h2>
-  <button onclick="changeVolume()">Change Volume</button>
-  <button onclick="switchOutput()">Switch Output</button>
-  <button onclick="printImage()">Print Image</button>
-  <p id="result"></p>
-
+  <h1>Mock PWA</h1>
+  <p>Click the button to send a message to the Chrome extension.</p>
+  <button onclick="sendToExtension()">Send Message to Extension</button>
   <script src="app.js"></script>
 </body>
 </html>
