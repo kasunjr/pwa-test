@@ -1,5 +1,5 @@
 function sendMessage(action, data) {
-  chrome.runtime.sendMessage("YOUR_EXTENSION_ID", { action, ...data }, (response) => {
+  chrome.runtime.sendMessage("fhafdbecdohieooenndcbmgcdnabodin", { action, ...data }, (response) => {
     console.log("PWA received:", response);
     document.getElementById("result").innerText = JSON.stringify(response);
   });
