@@ -1,49 +1,176 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PWA Voice Announcement</title>
-  <link rel="manifest" href="manifest.json" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="manifest" href="manifest.webmanifest" />
+<title>PWA: Audio & Print via Extension</title>
+<style>
+  body{font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin:20px; max-width: 900px}
+  header{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap}
+  .card{border:1px solid #ddd; border-radius:16px; padding:16px; box-shadow:0 2px 10px rgba(0,0,0,.05); margin:16px 0}
+  label{display:block; font-weight:600; margin:8px 0 4px}
+  button{padding:10px 14px; border-radius:10px; border:1px solid #ccc; cursor:pointer}
+  button.primary{background:#0b6ef6; color:white; border-color:#0b6ef6}
+  .row{display:flex; gap:16px; align-items:center; flex-wrap:wrap}
+  select, input[type="range"]{width: min(420px,100%)}
+  .log{white-space:pre-wrap; background:#f8fafc; padding:12px; border-radius:12px; border:1px solid #e2e8f0; max-height:240px; overflow:auto}
+  .muted{color:#ef4444; font-weight:700}
+</style>
 </head>
 <body>
-  <h1>Voice Announcement</h1>
-  <select id="voiceSelect"></select>
-  <button onclick="speak()">Announce</button>
+<header>
+  <h1>Audio & Print (PWA → Extension)</h1>
+  <div class="row">
+    <button id="installBtn" class="primary" hidden>Install app</button>
+    <button id="refreshBtn">Refresh devices</button>
+  </div>
+</header>
 
-  <script>
-    let voices = [];
+<section class="card">
+  <h2>Audio Output</h2>
+  <div class="row">
+    <div style="flex:1; min-width:280px">
+      <label for="deviceSelect">Output device</label>
+      <select id="deviceSelect"></select>
+    </div>
+    <div style="flex:1; min-width:280px">
+      <label for="volume">Volume: <span id="volLabel">—</span></label>
+      <input type="range" id="volume" min="0" max="100" step="1" />
+      <div class="row" style="margin-top:8px">
+        <button id="muteBtn">Mute/Unmute</button>
+        <span id="muteState" class=""></span>
+      </div>
+    </div>
+  </div>
+</section>
 
-    function populateVoices() {
-      voices = window.speechSynthesis.getVoices();
-      const voiceSelect = document.getElementById('voiceSelect');
-      voiceSelect.innerHTML = '';
+<section class="card">
+  <h2>Print a Simple Image</h2>
+  <div class="row">
+    <input type="file" id="imgFile" accept="image/*" />
+    <button id="printBtn" class="primary">Print Image</button>
+  </div>
+  <small>Tip: choose a small PNG. The extension will submit a roll‑print ticket if supported.</small>
+</section>
 
-      voices.forEach((voice, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = `${voice.name} (${voice.lang})${voice.default ? ' [default]' : ''}`;
-        voiceSelect.appendChild(option);
+<section class="card">
+  <h2>Log</h2>
+  <div id="log" class="log"></div>
+</section>
+
+<script>
+(async function(){
+  // PWA install
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.hidden = false;
+  });
+  installBtn.addEventListener('click', async () => {
+    if(deferredPrompt){ deferredPrompt.prompt(); installBtn.hidden = true; }
+  });
+
+  // Messaging bridge: PWA <-> content script (extension)
+  const EXT_ORIGIN = location.origin; // we will validate in content script too
+  function log(msg){ const el = document.getElementById('log'); el.textContent += msg + "\n"; el.scrollTop = el.scrollHeight; }
+
+  function askExtension(payload){
+    return new Promise((resolve, reject) => {
+      const id = Math.random().toString(36).slice(2);
+      function onMsg(event){
+        if(event.origin !== window.origin) return;
+        const d = event.data;
+        if(!d || d.__extReply !== id) return;
+        window.removeEventListener('message', onMsg);
+        if(d.error) reject(new Error(d.error));
+        else resolve(d.result);
+      }
+      window.addEventListener('message', onMsg);
+      window.postMessage({__pwaReq: id, payload}, window.origin);
+      setTimeout(() => { window.removeEventListener('message', onMsg); reject(new Error('Extension timeout')); }, 10000);
+    });
+  }
+
+  async function refreshDevices(){
+    try{
+      const res = await askExtension({type:'AUDIO_LIST'});
+      log('Devices: ' + JSON.stringify(res.devices, null, 2));
+      deviceSelect.innerHTML = '';
+      res.devices.filter(d => d.isOutputDevice).forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id; opt.textContent = d.displayName || d.name || d.id;
+        if(d.isActive) opt.selected = true;
+        deviceSelect.appendChild(opt);
       });
-    }
+      if(res.current){
+        volume.value = Math.round((res.current.volume || 0) * 100);
+        volLabel.textContent = volume.value;
+        muteState.textContent = res.current.isMuted ? 'Muted' : 'Unmuted';
+        muteState.className = res.current.isMuted ? 'muted' : '';
+      }
+    }catch(e){ log('Error listing devices: ' + e.message); }
+  }
 
-    function speak() {
-      const text = 'Welcome to the kiosk. Please follow the instructions.';
-      const utterance = new SpeechSynthesisUtterance(text);
-      const selectedVoiceIndex = document.getElementById('voiceSelect').value;
-      utterance.voice = voices[selectedVoiceIndex];
-      window.speechSynthesis.speak(utterance);
-    }
+  refreshBtn.addEventListener('click', refreshDevices);
+  deviceSelect.addEventListener('change', async () => {
+    const id = deviceSelect.value;
+    try{
+      await askExtension({type:'AUDIO_ROUTE', deviceId:id});
+      log('Routed to device ' + id);
+      await refreshDevices();
+    }catch(e){ log('Route error: ' + e.message); }
+  });
 
-    window.speechSynthesis.onvoiceschanged = populateVoices;
-    populateVoices();
-  </script>
+  volume.addEventListener('input', async () => {
+    const val = Number(volume.value)/100;
+    volLabel.textContent = volume.value;
+    try{
+      await askExtension({type:'AUDIO_SET_VOLUME', volume: val});
+      log('Set volume to ' + volume.value + '%');
+    }catch(e){ log('Volume error: ' + e.message); }
+  });
 
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('Service Worker Registered'));
-    }
-  </script>
+  muteBtn.addEventListener('click', async () => {
+    try{
+      const res = await askExtension({type:'AUDIO_TOGGLE_MUTE'});
+      muteState.textContent = res.isMuted ? 'Muted' : 'Unmuted';
+      muteState.className = res.isMuted ? 'muted' : '';
+      log('Mute toggled.');
+    }catch(e){ log('Mute error: ' + e.message); }
+  });
+
+  printBtn.addEventListener('click', async () => {
+    try{
+      let dataUrl = null;
+      if(imgFile.files && imgFile.files[0]){
+        const file = imgFile.files[0];
+        const buff = await file.arrayBuffer();
+        const b64 = btoa(String.fromCharCode(...new Uint8Array(buff)));
+        dataUrl = `data:${file.type || 'image/png'};base64,${b64}`;
+      }else{
+        // generate a small sample image via canvas
+        const c = document.createElement('canvas'); c.width=384; c.height=200;
+        const x = c.getContext('2d');
+        x.fillStyle='#fff'; x.fillRect(0,0,c.width,c.height);
+        x.fillStyle='#000'; x.font='20px system-ui'; x.fillText('Hello, Printer!', 10, 40);
+        x.strokeStyle='#000'; x.strokeRect(10,60,364,120);
+        dataUrl = c.toDataURL('image/png');
+      }
+      const res = await askExtension({type:'PRINT_IMAGE', dataUrl});
+      log('Print job status: ' + JSON.stringify(res));
+    }catch(e){ log('Print error: ' + e.message); }
+  });
+
+  // Register SW
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js').catch(err => log('SW error: ' + err.message));
+  }
+
+  // initial load
+  refreshDevices();
+})();
+</script>
 </body>
 </html>
