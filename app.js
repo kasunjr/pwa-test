@@ -14,7 +14,7 @@ function sendMessage(action, data) {
   //   console.error("Chrome runtime not available");
   // }
 
-  window.postMessage({ type: "PRINT", payload: { text: "Hello Printer!" } }, "*");
+  window.postMessage({ type: action, payload: { ...data } }, "*");
 }
 
 
