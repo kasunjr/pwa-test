@@ -8,12 +8,40 @@ function sendMessage(action, data) {
         return;
       }
       console.log("Response from extension:", response);
-      document.getElementById("result").innerText = JSON.stringify(response);
+      //document.getElementById("result").innerText = JSON.stringify(response);
     });
   } else {
     console.error("Chrome runtime not available");
   }
 }
+
+const consoleDiv = document.getElementById("result");
+
+    function printToScreen(type, args) {
+      const msg = args.map(a =>
+        (typeof a === "object" ? JSON.stringify(a) : a)
+      ).join(" ");
+
+      const line = document.createElement("div");
+      line.textContent = `[${type}] ${msg}`;
+      consoleDiv.appendChild(line);
+
+      // Keep auto-scroll to bottom
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+
+    // Backup original methods
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    const originalInfo = console.info;
+
+    // Override
+    console.log = (...args) => { printToScreen("log", args); originalLog.apply(console, args); }
+    console.error = (...args) => { printToScreen("error", args); originalError.apply(console, args); }
+    console.warn = (...args) => { printToScreen("warn", args); originalWarn.apply(console, args); }
+    console.info = (...args) => { printToScreen("info", args); originalInfo.apply(console, args); }
+
 
 function changeVolume() {
   sendMessage("changeVolume", { value: 70 });
