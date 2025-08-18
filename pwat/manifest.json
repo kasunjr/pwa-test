@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "Kiosk Audio App",
+  "version": "1.0",
+  "app": {
+    "background": {
+      "service_worker": "app.js"
+    }
+  },
+  "permissions": ["audio", "printing", "runtime"],
+  "kiosk_enabled": true,
+  "web_accessible_resources": [
+    {
+      "resources": ["index.html", "test-audio.mp3"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
