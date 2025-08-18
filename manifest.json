@@ -1,18 +1,23 @@
 {
-  "manifest_version": 2,
-  "name": "My Kiosk App",
+  "manifest_version": 3,
+  "name": "Mock Messaging Extension",
   "version": "1.0",
-  "kiosk_enabled": true,
-  "kiosk_only": true,
-  "app": {
-    "background": {
-      "scripts": ["background.js"]
-    }
+  "description": "A Chrome extension to test messaging with a PWA",
+  "background": {
+    "service_worker": "background.js"
   },
   "permissions": [
-    "audio",
-    "printing",
-    "storage",
-    "system.display"
-  ]
+    "runtime",
+    "tabs",
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://localhost:8000/*", "https://kasunjr.github.io/pwa-test/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:8000/*", "https://kasunjr.github.io/pwa-test/*"]
+  }
 }

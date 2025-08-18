@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Kiosk App</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
 </head>
 <body>
-  <h1>Chrome Kiosk App</h1>
-  <button onclick="setVolume(0.5)">Set Volume 50%</button>
-  <button onclick="printTest()">Print Test</button>
-
-  <script src="background.js"></script>
+  <h1>Mock PWA</h1>
+  <p>Click the button to send a message to the Chrome extension.</p>
+  <h2>PWA - Extension Messaging Test</h2>
+  <button onclick="changeVolume()">Change Volume</button>
+  <button onclick="switchOutput()">Switch Output</button>
+  <button onclick="printImage()">Print Image</button>
+  <p id="result"></p>
+  <script src="app.js"></script>
 </body>
 </html>
