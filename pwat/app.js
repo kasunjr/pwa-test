@@ -1,20 +1,20 @@
 
 function sendMessage(action, data) {
-  const extensionId = "paokdfbcnnafhdgbomcobigimeiaakfl"; // Replace with your extension's ID
+  const extensionId = "ghmfemhekjnahafgoepbkdpamcmingda"; // Replace with your extension's ID
   if (typeof chrome !== "undefined" && chrome.runtime) {
     chrome.runtime.sendMessage(extensionId, { action, ...data }, (response) => {
       if (chrome.runtime.lastError) {
         console.error("Error sending message from PWA:", chrome.runtime.lastError.message);
         return;
       }
-      console.log("Response from extension:", response);
+      console.log("Response from extension:", JSON.stringify(response));
       //document.getElementById("result").innerText = JSON.stringify(response);
     });
   } else {
     console.error("Chrome runtime not available");
   }
 
-  window.postMessage({ type: action, payload: { ...data } }, "*");
+  //window.postMessage({ type: action, payload: { ...data } }, "*");
 }
 
 document.getElementById("playAudio").addEventListener("click", ()=>{
