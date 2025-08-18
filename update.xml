@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gupdate xmlns="http://www.google.com/update2/response" protocol="2.0">
-  <app appid="paokdfbcnnafhdgbomcobigimeiaakfl">
+  <app appid="ghmfemhekjnahafgoepbkdpamcmingda">
     <updatecheck codebase="https://kasunjr.github.io/pwa-test/mock-extension.crx" version="1.0" />
   </app>
 </gupdate>
