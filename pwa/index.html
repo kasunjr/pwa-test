@@ -4,13 +4,14 @@
   <title>PWA ↔ Extension Messaging</title>
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; }
-    #logs { border: 1px solid #ccc; padding: 10px; margin-top: 10px; height: 200px; overflow-y: auto; }
-    button { margin-top: 10px; padding: 10px; }
+    #logs { border: 1px solid #ccc; padding: 10px; margin-top: 10px; height: 300px; overflow-y: auto; }
+    button { margin-top: 10px; padding: 10px; margin-right: 10px; }
   </style>
 </head>
 <body>
   <h1>PWA ↔ Extension Communication</h1>
-  <button id="sendBtn">Send Message to Extension</button>
+  <button id="sendPing">Send PING</button>
+  <button id="sendCustom">Send CUSTOM</button>
   <div id="logs"></div>
 
   <script src="app.js"></script>
