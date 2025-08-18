@@ -1,18 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "Kiosk Audio App",
+  "name": "Mock Messaging Extension",
   "version": "1.0",
-  "app": {
-    "background": {
-      "service_worker": "app.js"
-    }
+  "description": "A Chrome extension to test messaging with a PWA",
+  "background": {
+    "service_worker": "background.js"
   },
-  "permissions": ["audio", "printing", "runtime"],
-  "kiosk_enabled": true,
-  "web_accessible_resources": [
+  "permissions": [
+    "runtime",
+    "tabs",
+    "activeTab"
+  ],
+  "content_scripts": [
     {
-      "resources": ["index.html", "test-audio.mp3"],
-      "matches": ["<all_urls>"]
+      "matches": ["http://localhost:8000/*", "https://kasunjr.github.io/pwa-test/*"],
+      "js": ["content.js"]
     }
-  ]
+  ],
+  "externally_connectable": {
+    "matches": ["http://localhost:8000/*", "https://kasunjr.github.io/pwa-test/*"]
+  }
 }

@@ -1,45 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Kiosk Audio App</title>
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    #logs { border: 1px solid #ccc; height: 300px; overflow-y: auto; margin-top: 10px; }
-    button, input, select { margin: 5px; padding: 5px; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
 </head>
 <body>
-  <h1>Kiosk Audio & Print</h1>
-
+  <h1>Mock PWA</h1>
+  <p>Click the button to send a message to the Chrome extension.</p>
+  <h2>PWA - Extension Messaging Test</h2>
   <div>
     <audio id="audioPlayer" src="test-audio.mp3" controls></audio>
     <button id="playAudio">Play</button>
     <button id="pauseAudio">Pause</button>
   </div>
-
-  <div>
-    <label>Volume (0-1): </label>
-    <input type="number" id="volume" min="0" max="1" step="0.1" value="0.5">
-    <button id="setVolume">Set Volume</button>
-  </div>
-
-  <div>
-    <button id="mute">Mute</button>
-    <button id="unmute">Unmute</button>
-  </div>
-
-  <div>
-    <button id="getOutputs">Get Output Devices</button>
-    <select id="outputs"></select>
-    <button id="setOutput">Set Output</button>
-  </div>
-
-  <div>
-    <input type="text" id="printText" placeholder="Text to print">
-    <button id="printBtn">Print</button>
-  </div>
-
-  <div id="logs"></div>
+  <button onclick="changeVolume()">Change Volume</button>
+  <button onclick="switchOutput()">Switch Output</button>
+  <button onclick="printImage()">Print Image</button>
+  <p id="result"></p>
   <script src="app.js"></script>
 </body>
 </html>

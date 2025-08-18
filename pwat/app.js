@@ -1,34 +1,22 @@
-const extensionId = "cmbheebgjbdgkgghkgpnlapkoblhmcbf"; // replace with your loaded extension ID
-const logs = document.getElementById("logs");
-const audio = document.getElementById("audioPlayer");
 
-function log(msg){
-  const div = document.createElement("div");
-  div.textContent = msg;
-  logs.appendChild(div);
-  logs.scrollTop = logs.scrollHeight;
+function sendMessage(action, data) {
+  const extensionId = "ablahigkenmehcmhnemekdileghkakhi"; // Replace with your extension's ID
+  if (typeof chrome !== "undefined" && chrome.runtime) {
+    chrome.runtime.sendMessage(extensionId, { action, ...data }, (response) => {
+      if (chrome.runtime.lastError) {
+        console.error("Error sending message from PWA:", chrome.runtime.lastError.message);
+        return;
+      }
+      console.log("Response from extension:", response);
+      //document.getElementById("result").innerText = JSON.stringify(response);
+    });
+  } else {
+    console.error("Chrome runtime not available");
+  }
+
+  window.postMessage({ type: action, payload: { ...data } }, "*");
 }
 
-// Send message directly to extension
-function sendToExtension(msg){
-  log("Sending: " + JSON.stringify(msg));
-  chrome.runtime.sendMessage(extensionId, msg, response => {
-    log("Extension replied: " + JSON.stringify(response));
-    // Fill outputs select if array
-    if(Array.isArray(response.reply)){
-      const sel = document.getElementById("outputs");
-      sel.innerHTML = "";
-      response.reply.forEach(dev=>{
-        const opt = document.createElement("option");
-        opt.value = dev.id;
-        opt.textContent = dev.name || dev.id;
-        sel.appendChild(opt);
-      });
-    }
-  });
-}
-
-// Audio control
 document.getElementById("playAudio").addEventListener("click", ()=>{
   audio.play(); log("Audio started");
 });
@@ -36,25 +24,48 @@ document.getElementById("pauseAudio").addEventListener("click", ()=>{
   audio.pause(); log("Audio paused");
 });
 
-// Volume
-document.getElementById("setVolume").addEventListener("click", ()=>{
-  const level = parseFloat(document.getElementById("volume").value);
-  sendToExtension({type:"SET_VOLUME", level});
+// Listen for response
+window.addEventListener("message", (event) => {
+  console.log("Printer response:", event.data.payload);
+  
 });
 
-// Mute/unmute
-document.getElementById("mute").addEventListener("click", ()=>sendToExtension({type:"MUTE", muted:true}));
-document.getElementById("unmute").addEventListener("click", ()=>sendToExtension({type:"MUTE", muted:false}));
+const consoleDiv = document.getElementById("result");
 
-// Output devices
-document.getElementById("getOutputs").addEventListener("click", ()=>sendToExtension({type:"GET_OUTPUTS"}));
-document.getElementById("setOutput").addEventListener("click", ()=>{
-  const sel = document.getElementById("outputs");
-  if(sel.value) sendToExtension({type:"SET_OUTPUT", deviceId: sel.value});
-});
+    function printToScreen(type, args) {
+      const msg = args.map(a =>
+        (typeof a === "object" ? JSON.stringify(a) : a)
+      ).join(" ");
 
-// Print
-document.getElementById("printBtn").addEventListener("click", ()=>{
-  const text = document.getElementById("printText").value || "Hello";
-  sendToExtension({type:"PRINT", text});
-});
+      const line = document.createElement("div");
+      line.textContent = `[${type}] ${msg}`;
+      consoleDiv.appendChild(line);
+
+      // Keep auto-scroll to bottom
+      consoleDiv.scrollTop = consoleDiv.scrollHeight;
+    }
+
+    // Backup original methods
+    const originalLog = console.log;
+    const originalError = console.error;
+    const originalWarn = console.warn;
+    const originalInfo = console.info;
+
+    // Override
+    console.log = (...args) => { printToScreen("log", args); originalLog.apply(console, args); }
+    console.error = (...args) => { printToScreen("error", args); originalError.apply(console, args); }
+    console.warn = (...args) => { printToScreen("warn", args); originalWarn.apply(console, args); }
+    console.info = (...args) => { printToScreen("info", args); originalInfo.apply(console, args); }
+
+
+function changeVolume() {
+  sendMessage("changeVolume", { value: 70 });
+}
+
+function switchOutput() {
+  sendMessage("switchOutput", { device: "Speakers" });
+}
+
+function printImage() {
+  sendMessage("printImage", { image: "test.png" });
+}
