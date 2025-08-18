@@ -1,15 +1,18 @@
 {
-  "name": "Voice Announcement PWA",
-  "short_name": "VoicePWA",
-  "start_url": ".",
-  "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "80x80",
-      "type": "image/png"
+  "manifest_version": 2,
+  "name": "My Kiosk App",
+  "version": "1.0",
+  "kiosk_enabled": true,
+  "kiosk_only": true,
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
     }
+  },
+  "permissions": [
+    "audio",
+    "printing",
+    "storage",
+    "system.display"
   ]
 }
