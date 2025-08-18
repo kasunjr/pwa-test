@@ -1,6 +1,6 @@
 
 function sendMessage(action, data) {
-  const extensionId = "ghmfemhekjnahafgoepbkdpamcmingda"; // Replace with your extension's ID
+  const extensionId = "kecpddkbngmnhjdhnnpgjcjdlocmlklj"; // Replace with your extension's ID
   if (typeof chrome !== "undefined" && chrome.runtime) {
     chrome.runtime.sendMessage(extensionId, { action, ...data }, (response) => {
       if (chrome.runtime.lastError) {
