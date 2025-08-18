@@ -1,15 +1,25 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>PWA Audio Controller</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mock PWA</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icon.png">
 </head>
 <body>
-  <h2>PWA Audio Controller</h2>
-  <button onclick="getDevices()">Get Devices</button>
-  <button onclick="mute()">Mute</button>
-  <button onclick="unmute()">Unmute</button>
-  <button onclick="playSample()">Play Sample</button>
-  <div id="log"></div>
+  <h1>Mock PWA</h1>
+  <p>Click the button to send a message to the Chrome extension.</p>
+  <h2>PWA - Extension Messaging Test</h2>
+  <div>
+    <audio id="audioPlayer" src="test-audio.mp3" controls></audio>
+    <button id="playAudio">Play</button>
+    <button id="pauseAudio">Pause</button>
+  </div>
+  <button onclick="changeVolume()">Change Volume</button>
+  <button onclick="switchOutput()">Switch Output</button>
+  <button onclick="printImage()">Print Image</button>
+  <p id="result"></p>
   <script src="app.js"></script>
 </body>
 </html>
