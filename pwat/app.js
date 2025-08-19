@@ -1,6 +1,6 @@
 
 function sendMessage(action, data) {
-  const extensionId = "cnbggijfgefiebpbbjbfckhdcboiamdp"; // Replace with your extension's ID
+  const extensionId = "eanomfkocmhgompdmonkmloldkikgecp"; // Replace with your extension's ID
   if (typeof chrome !== "undefined" && chrome.runtime) {
     chrome.runtime.sendMessage(extensionId, { action, ...data }, (response) => {
       if (chrome.runtime.lastError) {
@@ -14,7 +14,7 @@ function sendMessage(action, data) {
     console.error("Chrome runtime not available");
   }
 
-  //window.postMessage({ type: action, payload: { ...data } }, "*");
+  window.postMessage({ type: action, payload: { ...data } }, "*");
 }
 
 document.getElementById("playAudio").addEventListener("click", ()=>{
