@@ -1,13 +1,13 @@
 
 function sendMessage(action, data) {
-  const extensionId = "hojldiiofcjijpookknfbdghiplnjhmc"; // Replace with your extension's ID
+  const extensionId = "ncjlhnlhlhaobjkgcpkoonbphemlmgdn"; // Replace with your extension's ID
   if (typeof chrome !== "undefined" && chrome.runtime) {
     chrome.runtime.sendMessage(extensionId, { action, ...data }, (response) => {
       if (chrome.runtime.lastError) {
-        console.error("Error sending message from PWA:", chrome.runtime.lastError.message);
+        console.error("Error sending message from PWA1:", chrome.runtime.lastError.message);
         return;
       }
-      console.log("Response from extension:", JSON.stringify(response));
+      console.log("Response from extension1:", JSON.stringify(response));
       //document.getElementById("result").innerText = JSON.stringify(response);
     });
   } else {
@@ -26,7 +26,7 @@ document.getElementById("pauseAudio").addEventListener("click", ()=>{
 
 // Listen for response
 window.addEventListener("message", (event) => {
-  console.log("Printer response:", JSON.stringify(event.data.payload));
+  console.log("Printer response1:", JSON.stringify(event.data.payload));
   
 });
 
@@ -63,9 +63,9 @@ function changeVolume() {
 }
 
 function switchOutput() {
-  sendMessage("switchOutput", { device: "Speakers" });
+  sendMessage("switchOutput", { device: "Speakers1" });
 }
 
 function printImage() {
-  sendMessage("printImage", { image: "test.png" });
+  sendMessage("printImage", { image: "test.png1" });
 }
