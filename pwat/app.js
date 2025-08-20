@@ -1,6 +1,6 @@
 
 function sendMessage(action, data) {
-  const extensionId = "ncjlhnlhlhaobjkgcpkoonbphemlmgdn"; // Replace with your extension's ID
+  const extensionId = "iaikpjlaoilkaiimlgllembffmpfnhcn"; // Replace with your extension's ID
   if (typeof chrome !== "undefined" && chrome.runtime) {
     chrome.runtime.sendMessage(extensionId, { action, ...data }, (response) => {
       if (chrome.runtime.lastError) {
@@ -68,4 +68,12 @@ function switchOutput() {
 
 function printImage() {
   sendMessage("printImage", { image: "test.png1" });
+}
+
+function getPrinters() {
+  sendMessage("getPrinters", {});
+}
+
+function getPrinterStatus() {
+  sendMessage("getPrinterStatus", { printerId: "printer1" });
 }
