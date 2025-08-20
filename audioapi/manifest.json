@@ -1,0 +1,9 @@
+{
+  "name": "PWA Audio Control",
+  "short_name": "AudioControl",
+  "start_url": "index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#4CAF50",
+  "description": "Control audio volume and output in PWA"
+}
