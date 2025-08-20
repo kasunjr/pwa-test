@@ -1,13 +1,13 @@
 
 function sendMessage(action, data) {
-  const extensionId = "lpmgafbcdadlkmiefggahdahnckpadng"; // Replace with your extension's ID
+  const extensionId = "lbkjecjnnfaeaejeodmpkgkahfpaankd"; // Replace with your extension's ID
   if (typeof chrome !== "undefined" && chrome.runtime) {
     chrome.runtime.sendMessage(extensionId, { action, ...data }, (response) => {
       if (chrome.runtime.lastError) {
-        console.error("Error sending message from PWA:", chrome.runtime.lastError.message);
+        console.error("Error sending message from PWA1:", chrome.runtime.lastError.message);
         return;
       }
-      console.log("Response from extension:", response);
+      console.log("Response from extension1:", JSON.stringify(response));
       //document.getElementById("result").innerText = JSON.stringify(response);
     });
   } else {
@@ -17,11 +17,16 @@ function sendMessage(action, data) {
   window.postMessage({ type: action, payload: { ...data } }, "*");
 }
 
-
+document.getElementById("playAudio").addEventListener("click", ()=>{
+  audio.play(); log("Audio started");
+});
+document.getElementById("pauseAudio").addEventListener("click", ()=>{
+  audio.pause(); log("Audio paused");
+});
 
 // Listen for response
 window.addEventListener("message", (event) => {
-  console.log("Printer response:", event.data.payload);
+  console.log("Printer response1:", JSON.stringify(event.data.payload));
   
 });
 
@@ -58,9 +63,17 @@ function changeVolume() {
 }
 
 function switchOutput() {
-  sendMessage("switchOutput", { device: "Speakers" });
+  sendMessage("switchOutput", { device: "Speakers1" });
 }
 
 function printImage() {
-  sendMessage("printImage", { image: "test.png" });
+  sendMessage("printImage", { image: "test.png1" });
+}
+
+function getPrinters() {
+  sendMessage("getPrinters", {device : "DeviceList"});
+}
+
+function getPrinterStatus() {
+  sendMessage("getPrinterStatus", { printerId: "printer1" });
 }
