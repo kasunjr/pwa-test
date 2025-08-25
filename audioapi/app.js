@@ -23,6 +23,7 @@ volumeSlider.addEventListener('input', () => {
 
 // List available audio outputs
 async function listOutputs() {
+  await navigator.mediaDevices.getUserMedia({ audio: true });
   const devices = await navigator.mediaDevices.enumerateDevices();
   const outputs = devices.filter(d => d.kind === 'audiooutput');
   outputSelect.innerHTML = '';
