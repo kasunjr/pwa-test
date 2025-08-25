@@ -5,5 +5,13 @@
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#4CAF50",
-  "description": "Control audio volume and output in PWA"
+  "description": "Control audio volume and output in PWA",
+  "permissions": [
+    "audioCapture",
+    "videoCapture"
+  ],
+  "optional_permissions": [
+    "audioCapture",
+    "videoCapture"
+  ]
 }
