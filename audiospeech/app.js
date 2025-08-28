@@ -37,7 +37,7 @@ function speakText(text, volume = 1.0) {
           window.speechSynthesis.speak(utterance);
         })
         .catch(err => {
-          console.warn('Failed to set output device:', err);
+          log('Failed to set output device:' + err);
           window.speechSynthesis.speak(utterance); // Fallback to default device
         });
     } else {
@@ -53,10 +53,10 @@ async function getAudioDevices() {
     await navigator.mediaDevices.getUserMedia({ audio: true });
     const devices = await navigator.mediaDevices.enumerateDevices();
     const outputDevices = devices.filter(device => device.kind === 'audiooutput');
-    console.log('Available output devices:', outputDevices);
+    log('Available output devices:' + outputDevices);
     return outputDevices;
   } catch (err) {
-    console.error('Error getting audio devices:', err);
+    log('Error getting audio devices:' + err);
     return [];
   }
 }
@@ -68,12 +68,12 @@ async function setOutputDevice(deviceId) {
       const audio = new Audio();
       await audio.setSinkId(deviceId);
       currentDeviceId = deviceId;
-      console.log(`Temporarily set audio output to device: ${deviceId}`);
+      log(`Temporarily set audio output to device: ${deviceId}`);
     } else {
-      console.warn('setSinkId not supported or invalid device ID');
+      log('setSinkId not supported or invalid device ID');
     }
   } catch (err) {
-    console.error('Error setting output device:', err);
+    log('Error setting output device:' + err);
     currentDeviceId = ''; // Reset to default
   }
 }
@@ -84,10 +84,10 @@ function startAnnouncements(intervalMs = 10000) {
     const { text, volume } = announcements[currentAnnouncementIndex];
     try {
       await speakText(text, volume);
-      console.log(`Played announcement: "${text}" at volume ${volume}`);
+      log(`Played announcement: "${text}" at volume ${volume}`);
       currentAnnouncementIndex = (currentAnnouncementIndex + 1) % announcements.length;
     } catch (err) {
-      console.error('Announcement error:', err);
+      log('Announcement error:' + err);
     }
   }, intervalMs);
 }
@@ -96,14 +96,14 @@ function startAnnouncements(intervalMs = 10000) {
 async function rotateOutputDevices(intervalMs = 30000) {
   availableDevices = await getAudioDevices();
   if (availableDevices.length === 0) {
-    console.warn('No audio output devices available');
+    log('No audio output devices available');
     return;
   }
   let deviceIndex = 0;
   setInterval(async () => {
     const device = availableDevices[deviceIndex];
     await setOutputDevice(device.deviceId);
-    console.log(`Switched to output device: ${device.label || device.deviceId}`);
+    log(`Switched to output device: ${device.label || device.deviceId}`);
     deviceIndex = (deviceIndex + 1) % availableDevices.length;
   }, intervalMs);
 }
@@ -119,6 +119,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Handle device changes (e.g., new devices plugged in)
   navigator.mediaDevices.addEventListener('devicechange', async () => {
     availableDevices = await getAudioDevices();
-    console.log('Audio devices updated:', availableDevices);
+    log('Audio devices updated:' + availableDevices);
   });
 });
