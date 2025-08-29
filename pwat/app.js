@@ -7,7 +7,7 @@ function sendMessage(action, data) {
         console.error("Error sending message from PWA1:", chrome.runtime.lastError.message);
         return;
       }
-      console.log("Response from extension1:", JSON.stringify(response));
+      console.log("Response from extension2:", JSON.stringify(response));
       //document.getElementById("result").innerText = JSON.stringify(response);
     });
   } else {
